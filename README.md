@@ -1,6 +1,7 @@
 # 8-Puzzle Solver — Uniform Cost Search
 
 Interactive web application that solves the **8-Puzzle** with the **Uniform Cost Search (UCS)** algorithm and visualises every step of the search.
+URL : https://tejus8.github.io/8_puzzle_ucs/
 
 ## Student Details
 **Course:** Artificial Intelligence (BCSE306L)
