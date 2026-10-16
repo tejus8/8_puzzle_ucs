@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg"><title>8-Puzzle · Uniform Cost Search</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css"></head>
+<body>
+<div class="max-w-6xl mx-auto px-4 py-6" style="padding-top:calc(env(safe-area-inset-top,0px) + 16px)">
+<header class="flex flex-wrap items-center justify-between gap-3 mb-6">
+ <div class="font-extrabold text-lg tracking-tight">🧩 8-Puzzle <span class="mut font-semibold">· Uniform Cost Search</span></div>
+ <nav class="nav flex gap-1 bg-[var(--bg)] p-1 rounded-full border border-[var(--bd)]"><button class="on" data-p="home">Home</button><button data-p="solver">Solver</button><button data-p="info">Algorithm Info</button></nav>
+</header>
+
+<!-- HOME -->
+<section id="home" class="page on">
+ <div class="card text-center hero-section">
+  <h1 class="text-3xl sm:text-5xl font-extrabold mb-4 hero-title">8-Puzzle Solver</h1>
+  <p class="mut max-w-2xl mx-auto mb-8 text-base sm:text-lg leading-relaxed">Watch <b>Uniform Cost Search</b> explore the state space of the classic sliding-tile puzzle, node by node, with live frontier, explored set and statistics.</p>
+  <div class="inline-block text-left card student-card mb-8"><div><b>Course Name :</b> Artificial Intelligence</div><div><b>Name :</b> Tejus Sinha</div><div><b>Reg No :</b> 24BCI0175</div></div>
+  <div id="heroBoards" class="flex justify-center items-center gap-6 mb-8"></div>
+  <button class="btn pri" onclick="go('solver')">Open the Solver →</button>
+ </div>
+ <div class="grid md:grid-cols-2 gap-4 mt-6">
+  <div class="card"><h2>What is the 8-Puzzle?</h2><p class="mut leading-relaxed">A 3×3 board holds eight numbered tiles and one empty space. A move slides an adjacent tile into the blank. Starting from a scrambled arrangement, the goal is to reach a target arrangement (usually 1–8 in order, blank last) using as few moves as possible.</p></div>
+  <div class="card"><h2>Why it matters</h2><p class="mut leading-relaxed">It is a textbook search problem: 9!/2 = <b>181,440</b> reachable states, branching factor 2–4, and optimal solutions of up to 31 moves. Exactly half of all arrangements are unsolvable, decided by the parity of inversions.</p></div>
+ </div>
+</section>
+
+<!-- SOLVER -->
+<section id="solver" class="page">
+ <div class="grid lg:grid-cols-3 gap-4">
+  <div class="card lg:col-span-1">
+   <h2>Puzzle Input</h2>
+   <div class="flex gap-2 mb-3"><button class="btn pri" id="mManual">Manual</button><button class="btn" id="mRandom">Random</button></div>
+   <div class="lbl mb-1">Initial state (0 = blank)</div><div id="gInit" class="grid grid-cols-3 gap-1 w-fit mb-3"></div>
+   <div class="lbl mb-1">Goal state</div><div id="gGoal" class="grid grid-cols-3 gap-1 w-fit mb-3"></div>
+   <button class="btn w-full" id="shuffle" style="display:none">🎲 Generate random solvable puzzle</button>
+   <div id="msg" class="text-sm mt-2"></div>
+  </div>
+  <div class="card lg:col-span-2">
+   <div class="grid sm:grid-cols-3 gap-4 items-start">
+    <div><div class="lbl text-center mb-1">Initial</div><div id="miniInit"></div></div>
+    <div><div class="lbl text-center mb-1">Current state</div>
+     <svg id="cur" viewBox="0 0 300 300" class="w-full max-w-[300px] mx-auto"><rect width="300" height="300" rx="16" fill="var(--bd)"/><g id="tiles"></g></svg></div>
+    <div><div class="lbl text-center mb-1">Goal</div><div id="miniGoal"></div></div>
+   </div>
+   <div class="flex flex-wrap gap-2 mt-4 items-center justify-center">
+    <button class="btn pri" id="bRun">▶ Run</button><button class="btn" id="bPause">⏸ Pause</button><button class="btn" id="bResume">⏯ Resume</button>
+    <button class="btn" id="bPrev">⏮ Previous</button><button class="btn" id="bNext">⏭ Next step</button><button class="btn" id="bEnd">⏩ Skip to end</button><button class="btn" id="bReset">↺ Reset</button>
+   </div>
+   <div class="flex items-center gap-3 mt-3 justify-center text-sm"><span class="mut">Speed</span><input type="range" id="speed" min="1" max="10" value="5"><span id="spv" class="font-bold w-6">5</span></div>
+   <div id="status" class="text-center mt-3 font-semibold mut">Idle - set a puzzle and press Run.</div>
+  </div>
+ </div>
+
+ <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+  <div class="stat"><div class="lbl">Nodes generated</div><div class="val" id="sGen">0</div></div>
+  <div class="stat"><div class="lbl">Nodes expanded</div><div class="val" id="sExp">0</div></div>
+  <div class="stat"><div class="lbl">Search depth (current)</div><div class="val" id="sDepth">0</div></div>
+  <div class="stat"><div class="lbl">Path cost g(n)</div><div class="val" id="sCost">0</div></div>
+  <div class="stat"><div class="lbl">Frontier size</div><div class="val" id="sFr">0</div></div>
+  <div class="stat"><div class="lbl">Explored size</div><div class="val" id="sEx">0</div></div>
+  <div class="stat"><div class="lbl">Current node</div><div class="val text-sm font-mono" id="sNode">—</div></div>
+  <div class="stat"><div class="lbl">Parent node</div><div class="val text-sm font-mono" id="sPar">—</div></div>
+ </div>
+
+ <div class="grid lg:grid-cols-3 gap-4 mt-4">
+  <div class="card"><h2 class="!text-base">Successor states generated</h2><div id="kids" class="flex flex-wrap gap-3 justify-center min-h-[110px] items-start"><span class="mut text-sm">—</span></div></div>
+  <div class="card"><h2 class="!text-base">Frontier / Open list <span class="mut text-xs">(next to expand first)</span></h2><div id="fr" class="min-h-[110px]"></div></div>
+  <div class="card"><h2 class="!text-base">Explored / Closed list <span class="mut text-xs">(latest first)</span></h2><div id="ex" class="min-h-[110px]"></div></div>
+ </div>
+
+ <div id="result" class="card mt-4" style="display:none"></div>
+ <div id="pathCard" class="card mt-4" style="display:none"><div class="flex justify-between items-center mb-2"><h2 class="!mb-0">Solution path</h2><button class="btn" id="bReplay">▶ Animate solution on board</button></div><div id="path" class="flex gap-2 overflow-x-auto pb-2" style="max-width:100%"></div></div>
+</section>
+
+<!-- INFO -->
+<section id="info" class="page">
+ <div class="grid md:grid-cols-2 gap-4">
+  <div class="card md:col-span-2"><h2><b>Uniform Cost Search (UCS)</b></h2><p class="mut leading-relaxed">UCS is an uninformed search algorithm that always expands the frontier node with the lowest accumulated path cost g(n). It is Dijkstra's algorithm applied to an implicit graph, and it needs no heuristic. In the 8-puzzle every move costs 1, so UCS expands states level by level and behaves like Breadth-First Search, while still being correct for arbitrary positive step costs.</p></div>
+  <div class="card"><h2><b>Working Principle</b></h2><ol class="l" style="list-style:decimal">
+   <li>Put the start node in a priority queue keyed by g(n) = 0.</li>
+   <li>Pop the cheapest node. If it is the goal, stop; the path is optimal.</li>
+   <li>Otherwise expand it: slide the blank to each legal neighbour to create successors with g = g(parent) + 1.</li>
+   <li>Skip successors already in the frontier or explored set; push the new ones.</li>
+   <li>Repeat until the goal is popped or the queue is empty (no solution).</li></ol></div>
+  <div class="card"><h2><b>Complexity &amp; Properties</b></h2><ul class="l">
+   <li><b>Time:</b> O(b<sup>1+⌊C*/ε⌋</sup>); with unit costs O(b<sup>d</sup>)</li>
+   <li><b>Space:</b> O(b<sup>1+⌊C*/ε⌋</sup>); all generated nodes are stored</li>
+   <li><b>Complete:</b> Yes, if b is finite and every step cost ≥ ε &gt; 0</li>
+   <li><b>Optimal:</b> Yes; nodes are expanded in order of increasing path cost</li>
+   <li><b>8-puzzle:</b> b ≈ 2.67 average, at most 181,440 states, max depth 31</li></ul></div>
+  <div class="card"><h2><b>Advantages</b></h2><ul class="l"><li>Guarantees the cheapest solution</li><li>Needs no domain knowledge or heuristic</li><li>Handles non-uniform step costs</li><li>Complete on finite state spaces</li></ul></div>
+  <div class="card"><h2><b>Limitations</b></h2><ul class="l"><li>Explores in every direction, including away from the goal</li><li>Memory grows exponentially with solution cost</li><li>Slower than A* with an admissible heuristic</li><li>Needs a duplicate check to avoid re-exploring states</li></ul></div>
+ </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <strong>Tejus Sinha</strong> · 24BCI0175 · Artificial Intelligence · 8-Puzzle UCS Solver
+</footer>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body></html>
