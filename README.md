@@ -2,7 +2,8 @@
 
 Interactive web application that solves the **8-Puzzle** with the **Uniform Cost Search (UCS)** algorithm and visualises every step of the search.
 
-**Course:** Artificial Intelligence
+## Student Details
+**Course:** Artificial Intelligence (BCSE306L)
 **Name:** Tejus Sinha
 **Reg No:** 24BCI0175
 
@@ -16,6 +17,9 @@ Interactive web application that solves the **8-Puzzle** with the **Uniform Cost
 - Controls: Run, Pause, Resume, Next step, Previous, Skip to end, Reset, speed slider
 - Algorithm Info page: description, working principle, advantages, limitations, complexity, completeness, optimality
 
+## Tech stack
+HTML5, CSS3, JavaScript (ES6), Tailwind CSS (CDN), SVG animation.
+
 ## Project structure
 ```
 8-puzzle-ucs/
@@ -28,6 +32,13 @@ Interactive web application that solves the **8-Puzzle** with the **Uniform Cost
     └── images/favicon.svg
 ```
 
+## Screenshots
+<img width="1119" height="563" alt="Screenshot 2026-10-16 124041" src="https://github.com/user-attachments/assets/64729109-1a08-45a0-8c7f-785d1e0875a1" />
+<img width="729" height="467" alt="Screenshot 2026-10-16 124130" src="https://github.com/user-attachments/assets/ba808008-3290-461b-bc7c-35b1c2201dd4" />
+<img width="704" height="478" alt="Screenshot 2026-10-16 124149" src="https://github.com/user-attachments/assets/a76c1310-f571-4116-982d-a5a09389f8d3" />
+<img width="776" height="511" alt="Screenshot 2026-10-16 124202" src="https://github.com/user-attachments/assets/36772a32-188f-4f36-865d-7d6dd7a23cf5" />
+
+
 ## Run locally
 No build step is needed. Open `index.html` in a browser (an internet connection is required for the Tailwind CSS CDN script).
 
@@ -38,8 +49,9 @@ cd 8-puzzle-ucs
 python3 -m http.server 8000
 ```
 
-## Deploy with GitHub Pages
-Repository **Settings → Pages → Deploy from a branch → main / (root)**.
+## Deployed with GitHub Pages
+GitHub Pages URL : https://tejus8.github.io/8_puzzle_ucs/
+
 
 ## How it works
 UCS keeps a priority queue ordered by path cost g(n). It repeatedly pops the cheapest node, stops if it is the goal, otherwise expands it by sliding the blank into each legal neighbour (cost 1 per move) and skips states already seen. With unit costs it expands level by level and returns an optimal solution.
@@ -51,5 +63,17 @@ Solvability is checked with inversion parity; unsolvable puzzles exhaust all 181
 | Complete | Yes |
 | Optimal | Yes |
 
-## Tech stack
-HTML5, CSS3, JavaScript (ES6), Tailwind CSS (CDN), SVG animation.
+## References
+
+### Textbooks
+1. S. Russell and P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2020. Chapter 3 (Solving Problems by Searching) covers uniform-cost search and the 8-puzzle
+
+### Research papers
+2. E. W. Dijkstra, "A note on two problems in connexion with graphs," *Numerische Mathematik*, vol. 1, pp. 269–271, 1959. UCS is Dijkstra's algorithm applied to an implicit graph.
+
+### Online documentation
+3. Wikipedia, "15 puzzle" (also covers the 8-puzzle variant): https://en.wikipedia.org/wiki/15_puzzle
+4. Wikipedia, "Dijkstra's algorithm" (includes the uniform-cost search variant): https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+5. MDN Web Docs, "SVG: Scalable Vector Graphics": https://developer.mozilla.org/en-US/docs/Web/SVG
+6. Tailwind CSS documentation: https://tailwindcss.com/docs
+7. GitHub Pages documentation: https://docs.github.com/en/pages
