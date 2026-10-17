@@ -64,6 +64,17 @@ Solvability is checked with inversion parity; unsolvable puzzles exhaust all 181
 | Complete | Yes |
 | Optimal | Yes |
 
+## Comparison of Search Algorithms
+
+| Algorithm | Type | Complete | Optimal | Time | Space | Remarks for the 8-Puzzle |
+|---|---|---|---|---|---|---|
+| Breadth-First Search (BFS) | Uninformed | Yes | Yes (unit step cost) | O(b^d) | O(b^d) | Expands level by level; behaves the same as UCS here because every move costs 1 |
+| Depth-First Search (DFS) | Uninformed | No (can loop without a visited check) | No | O(b^m) | O(bm) | Very low memory, but may return a long, non-shortest solution |
+| Iterative Deepening DFS (IDDFS) | Uninformed | Yes | Yes (unit step cost) | O(b^d) | O(bd) | Optimal like BFS with far less memory, but repeats earlier work |
+| **Uniform Cost Search (UCS)** ✔ implemented | Uninformed | Yes (step cost ≥ ε > 0) | Yes | O(b^(1+⌊C*/ε⌋)) | O(b^(1+⌊C*/ε⌋)) | Expands the lowest path cost g(n) first; works with unequal costs; explores in every direction |
+| Greedy Best-First Search | Informed | No | No | O(b^m) | O(b^m) | Fast when the heuristic is good, but can be misled and gives no optimality guarantee |
+| A* Search | Informed | Yes | Yes (admissible heuristic) | Exponential in the worst case, usually far less than UCS | O(b^d) | Uses f(n) = g(n) + h(n), e.g. misplaced tiles or Manhattan distance; a natural improvement on UCS |
+
 ## References
 
 ### Textbooks
